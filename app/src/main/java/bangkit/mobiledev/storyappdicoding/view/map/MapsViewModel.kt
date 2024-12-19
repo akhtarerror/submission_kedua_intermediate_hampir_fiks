@@ -6,12 +6,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import bangkit.mobiledev.storyappdicoding.data.repository.StoryRepository
 import bangkit.mobiledev.storyappdicoding.data.response.StoryResponse
-import com.google.android.gms.maps.GoogleMap
 import kotlinx.coroutines.launch
 
-class MapsViewModel(private val storyRepository: StoryRepository) : ViewModel() {
-    private val _storiesWithMap = MutableLiveData<StoryResponse>()
-    val storiesWithMap: LiveData<StoryResponse> = _storiesWithMap
+class MapViewModel(private val storyRepository: StoryRepository) : ViewModel() {
+    private val _storiesWithLocation = MutableLiveData<StoryResponse>()
+    val storiesWithLocation: LiveData<StoryResponse> = _storiesWithLocation
 
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
@@ -19,12 +18,12 @@ class MapsViewModel(private val storyRepository: StoryRepository) : ViewModel() 
     private val _error = MutableLiveData<String>()
     val error: LiveData<String> = _error
 
-    fun getStoriesWithMap() {
+    fun getStoriesWithLocation() {
         _isLoading.value = true
         viewModelScope.launch {
             try {
-                val response = storyRepository.getAllStoriesWithMap()
-                _storiesWithMap.value = response
+                val response = storyRepository.getAllStoriesWithLocation()
+                _storiesWithLocation.value = response
                 _isLoading.value = false
             } catch (e: Exception) {
                 _error.value = e.message

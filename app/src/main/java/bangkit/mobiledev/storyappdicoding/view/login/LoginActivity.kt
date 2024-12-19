@@ -20,9 +20,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
     private val userPreferences by lazy { UserPreferences(applicationContext) }
     private val userRepository by lazy {
-        UserRepository(
-            ApiConfig.getApiService()
-        )
+        UserRepository.getInstance(ApiConfig.getApiService(), userPreferences)
     }
     private val loginViewModel: LoginViewModel by viewModels {
         LoginViewModelFactory(userRepository, userPreferences)

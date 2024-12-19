@@ -181,7 +181,7 @@ class AddStoryActivity : AppCompatActivity() {
 
         viewModel.errorMessage.observe(this) { message ->
             binding.progressBar.visibility = View.GONE
-            Toast.makeText(this, getString(R.string.up_fail, message), Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.up_failed, message), Toast.LENGTH_SHORT).show()
         }
 
         viewModel.isLoading.observe(this) { isLoading ->

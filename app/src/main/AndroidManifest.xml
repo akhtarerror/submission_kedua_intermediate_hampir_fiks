@@ -44,6 +44,7 @@
             android:name=".view.map.MapsActivity"
             android:exported="false"
             android:theme="@style/Theme.ShowMaps"
+            android:configChanges="orientation|screenSize"
             android:label="Maps" />
 
         <provider

@@ -16,12 +16,14 @@
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:layout_marginBottom="16dp"
+            android:contentDescription="@string/description"
             android:scaleType="centerCrop"
             android:background="@color/darker_gray"/>
 
         <Button
             android:id="@+id/btn_choose_from_gallery"
             android:layout_width="match_parent"
+            android:contentDescription="@string/description"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/orange"
             android:text="@string/gallery" />
@@ -40,14 +42,16 @@
         <CheckBox
             android:id="@+id/cb_share_location"
             android:layout_width="wrap_content"
+            android:contentDescription="@string/description"
             android:layout_height="wrap_content"
-            android:text="Bagikan Lokasi Anda" />
+            android:text="@string/share_location" />
 
         <Button
             android:id="@+id/button_add"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/up_story"
+            android:contentDescription="@string/description"
             android:layout_marginTop="16dp"
             android:backgroundTint="@color/orange"
             android:textColor="@color/white" />
@@ -56,11 +60,11 @@
             android:id="@+id/progress_bar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:contentDescription="@string/description"
             android:layout_gravity="center"
             android:visibility="gone"
             android:indeterminate="true"
             android:layout_marginTop="16dp"
             android:indeterminateTint="@color/orange"/>
-
     </LinearLayout>
 </ScrollView>

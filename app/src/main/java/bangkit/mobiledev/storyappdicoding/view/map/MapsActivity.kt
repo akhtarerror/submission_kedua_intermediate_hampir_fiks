@@ -19,14 +19,13 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.MapStyleOptions
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
-    private lateinit var mMap: GoogleMap
     private lateinit var binding: ActivityMapsBinding
-    private lateinit var viewModel: MapsViewModel
+    private lateinit var viewModel: MapViewModel
+    private var mMap: GoogleMap? = null
 
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
@@ -43,37 +42,33 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         binding = ActivityMapsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Initialize ViewModel
         val factory = Injection.provideStoryMapViewModelFactory(this)
-        viewModel = ViewModelProvider(this, factory)[MapsViewModel::class.java]
+        viewModel = ViewModelProvider(this, factory)[MapViewModel::class.java]
 
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
-        // Observe ViewModel
         observeViewModel()
     }
 
     private fun observeViewModel() {
-        viewModel.storiesWithMap.observe(this) { response ->
-            response.listStory?.let { stories ->
-                // Add markers for each story with location
-                stories.forEach { story ->
-                    story.lat?.let { lat ->
-                        story.lon?.let { lon ->
-                            val latLng = LatLng(lat as Double, lon as Double)
-                            mMap.addMarker(
-                                MarkerOptions()
-                                    .position(latLng)
-                                    .title(story.name)
-                                    .snippet(story.description)
-                            )
-                        }
+        viewModel.storiesWithLocation.observe(this) { response ->
+            mMap?.let { googleMap ->
+                response.listStory?.forEach { story ->
+                    val lat = story.lat
+                    val lon = story.lon
+                    if (lat != null && lon != null) {
+                        val latLng = LatLng(lat as Double, lon as Double)
+                        googleMap.addMarker(
+                            MarkerOptions()
+                                .position(latLng)
+                                .title(story.name)
+                                .snippet(story.description)
+                        )
                     }
                 }
-            }
+            } ?: Log.e("MapsActivity", "Google Map is not initialized yet.")
         }
 
         viewModel.error.observe(this) { errorMessage ->
@@ -85,45 +80,38 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mMap = googleMap
         setMapStyle()
 
-        // Konfigurasi pengaturan peta
-        mMap.uiSettings.isZoomControlsEnabled = true
-        mMap.uiSettings.isIndoorLevelPickerEnabled = true
-        mMap.uiSettings.isCompassEnabled = true
-        mMap.uiSettings.isMapToolbarEnabled = true
+        googleMap.uiSettings.isZoomControlsEnabled = true
+        googleMap.uiSettings.isIndoorLevelPickerEnabled = true
+        googleMap.uiSettings.isCompassEnabled = true
+        googleMap.uiSettings.isMapToolbarEnabled = true
 
-        // Menetapkan posisi awal di Indonesia
-        val indonesiaLatLng = LatLng(-0.7893, 113.9213) // Koordinat pusat Indonesia
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(indonesiaLatLng, 5f)) // Zoom level 5 untuk cakupan yang lebih luas
+        val indonesiaLatLng = LatLng(-0.7893, 113.9213)
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(indonesiaLatLng, 5f))
 
-        // Ambil cerita dengan lokasi
-        viewModel.getStoriesWithMap()
-
-        // Enable my location on the map if permission is granted
+        viewModel.getStoriesWithLocation()
         enableMyLocation()
     }
 
     private fun enableMyLocation() {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            if (checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-                mMap.isMyLocationEnabled = true
+            if (checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                mMap?.isMyLocationEnabled = true
             } else {
                 requestPermissionLauncher.launch(android.Manifest.permission.ACCESS_FINE_LOCATION)
             }
         } else {
-            mMap.isMyLocationEnabled = true
+            mMap?.isMyLocationEnabled = true
         }
     }
 
     private fun setMapStyle() {
         try {
-            val success =
-                mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.map_style))
-            if (!success) {
-                Log.e("TAG", "Style parsing failed.")
+            val success = mMap?.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.map_style))
+            if (success == false) {
+                Log.e("MapsActivity", "Style parsing failed.")
             }
-        } catch (exception: Resources.NotFoundException) {
-            Log.e("TAG", "Can't find style. Error: ", exception)
+        } catch (e: Resources.NotFoundException) {
+            Log.e("MapsActivity", "Can't find style. Error: ", e)
         }
     }
 
@@ -135,19 +123,19 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.normal_type -> {
-                mMap.mapType = GoogleMap.MAP_TYPE_NORMAL
+                mMap?.mapType = GoogleMap.MAP_TYPE_NORMAL
                 true
             }
             R.id.satellite_type -> {
-                mMap.mapType = GoogleMap.MAP_TYPE_SATELLITE
+                mMap?.mapType = GoogleMap.MAP_TYPE_SATELLITE
                 true
             }
             R.id.terrain_type -> {
-                mMap.mapType = GoogleMap.MAP_TYPE_TERRAIN
+                mMap?.mapType = GoogleMap.MAP_TYPE_TERRAIN
                 true
             }
             R.id.hybrid_type -> {
-                mMap.mapType = GoogleMap.MAP_TYPE_HYBRID
+                mMap?.mapType = GoogleMap.MAP_TYPE_HYBRID
                 true
             }
             else -> super.onOptionsItemSelected(item)

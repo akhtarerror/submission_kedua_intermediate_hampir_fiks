@@ -33,18 +33,13 @@ interface ApiService {
         @Field("password") password: String
     ): RegisterResponse
 
-    @GET("stories/{id}")
-    suspend fun getDetailStory(
-        @Header("Authorization") token: String,
-        @Path("id") id: String
-    ): DetailStoryResponse
-
     @GET("stories")
     suspend fun getAllStories(
         @Header("Authorization") token: String,
         @Query("page") page: Int? = null,
         @Query("size") size: Int? = null,
-        @Query("location") location: Int = 0
+        @Query("location") location: Int = 0,
+        @Query("sort") sort: String? = "createdAt"
     ): StoryResponse
 
     @GET("stories")
@@ -52,6 +47,12 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Query("location") location : Int = 1
     ): StoryResponse
+
+    @GET("stories/{id}")
+    suspend fun getDetailStory(
+        @Header("Authorization") token: String,
+        @Path("id") id: String
+    ): DetailStoryResponse
 
     @Multipart
     @POST("stories")

@@ -26,6 +26,7 @@
             <ImageView
                 android:id="@+id/iv_item_photo"
                 android:layout_width="150dp"
+                android:contentDescription="@string/description"
                 android:layout_height="150dp"
                 android:src="@drawable/ic_launcher_foreground"
                 android:layout_marginEnd="16dp"

@@ -11,18 +11,16 @@ import com.bumptech.glide.Glide
 import bangkit.mobiledev.storyappdicoding.databinding.ItemStoryBinding
 
 class StoryAdapter(
-    private var stories: MutableList<ListStoryItem>, // Change to MutableList for dynamic updates
+    private var stories: MutableList<ListStoryItem>,
     private val onItemClick: (ListStoryItem, ActivityOptionsCompat) -> Unit
 ) : RecyclerView.Adapter<StoryAdapter.StoryViewHolder>() {
 
-    // Getter function to access stories
     fun getStories(): List<ListStoryItem> = stories
 
-    // Function to update stories list
     fun updateStories(newStories: List<ListStoryItem>) {
-        stories.clear() // Clear current list
-        stories.addAll(newStories) // Add new stories
-        notifyDataSetChanged() // Notify the adapter that the data has changed
+        stories.clear()
+        stories.addAll(newStories)
+        notifyDataSetChanged()
     }
 
     inner class StoryViewHolder(private val binding: ItemStoryBinding) :

@@ -1,25 +1,19 @@
 package bangkit.mobiledev.storyappdicoding.view.main
 
-import bangkit.mobiledev.storyappdicoding.data.response.ListStoryItem
-import java.text.SimpleDateFormat
-import java.util.*
+import bangkit.mobiledev.storyappdicoding.database.entity.StoryEntity
 
 object DataDummy {
-
-    fun generateDummyStoryResponse(): List<ListStoryItem> {
-        val items: MutableList<ListStoryItem> = arrayListOf()
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
-        val currentDate = dateFormat.format(Date())
-
-        for (i in 0..100) {
-            val story = ListStoryItem(
-                photoUrl = "https://example.com/photo$i.jpg",  // Contoh URL foto
-                createdAt = currentDate,  // Menggunakan tanggal saat ini
-                name = "author + $i",  // Nama penulis
-                description = "description for story $i",  // Deskripsi cerita
-                lon = 106.8456,  // Contoh nilai longitude
-                id = i.toString(),  // ID sebagai string
-                lat = -6.2088  // Contoh nilai latitude
+    fun generateDummyStoryEntity(): List<StoryEntity> {
+        val items: MutableList<StoryEntity> = arrayListOf()
+        for (i in 0..10) {
+            val story = StoryEntity(
+                id = "story-$i",
+                name = "Story Name $i",
+                description = "Description $i",
+                photoUrl = "https://picsum.photos/200/300?random=$i",
+                createdAt = "2023-01-01T00:00:00Z",
+                lat = null,
+                lon = null
             )
             items.add(story)
         }
